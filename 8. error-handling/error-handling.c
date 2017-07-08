@@ -4,38 +4,100 @@
 
 static char input[2048];
 
+typedef struct {
+	int type;
+	long num;
+	int err;
+} lval;
 
-long eval_op(long x, char* op, long y){
-	if (strcmp(op,"+") == 0) {return x + y;}
-	if (strcmp(op,"-") == 0) {return x - y;}
-	if (strcmp(op, "*") == 0) {return x * y;}
-	if (strcmp(op, "/") == 0) {return x / y;}
-	if (strcmp(op, "%") == 0) {return x % y;}
-	if (strcmp(op, "^") == 0) {return powl(x,y);}
-	if (strcmp(op, "n") == 0) {return fminl(x,y);}
-	if (strcmp(op, "x") == 0) {return fmaxl(x,y);}
-	
-	return 0;
+enum {LVAL_NUM, LVAL_ERR};
+
+enum {LERR_DIV_ZERO, LERR_BAD_OP, LERR_BAD_NUM};
+
+lval lval_num(long x){
+	lval v; // creation of a new lval instance
+	v.type = LVAL_NUM;
+	v.num = x; // refers to the input x
+	//no v.err because this is not an error case.
+	return v; 	
 }
 
-long eval(mpc_ast_t* t){
+lval lval_err(long x){
+	lval v;
+	v.type = LVAL_ERR;
+	v.err = x;
+	// error yet to be assigned since it's unknown what it is
+	return v;
+}
+
+void lval_print(lval v){
+	switch (v.type){
+		// case being the resultant lval is a number, hence no error, and we print out the number
+		case LVAL_NUM: 
+		printf("%li", v.num); 
+		break;
+		// case being there's an error, we'll check what kind and print out the appropriate error message
+		case LVAL_ERR: // 
+			//could probably use another switch statement here though...?
+			if (v.err == LERR_DIV_ZERO){
+				printf("Error: Division by Zero DOME DOME DOME");
+			}
+			if (v.err == LERR_BAD_OP){
+				printf("Error: Inappropriate operator used!!! NOPE");
+			}
+			if (v.err == LERR_BAD_NUM){
+				printf("Error: An invalid number detected. Check for 322 pls");
+			}
+			break;
+	}
+}
+//print lval following new new line (ln)
+void lval_println(lval v){
+	lval_print(v);
+	putchar('\n');
+}
+
+lval eval_op(lval x, char* op, lval y){
 	
+	if (x.type == LVAL_ERR){ return x;}
+	if (y.type == LVAL_ERR){ return y;}
+	
+	if (strcmp(op,"+") == 0) {return lval_num(x.num + y.num);}
+	if (strcmp(op,"-") == 0) {return lval_num(x.num - y.num);}
+	if (strcmp(op, "*") == 0) {return lval_num(x.num * y.num);}
+	if (strcmp(op, "/") == 0) {
+		return y.num == 0
+		? lval_err(LERR_DIV_ZERO)
+		: lval_num(x.num / y.num);
+		}
+	if (strcmp(op, "%") == 0) {return lval_num(x.num % y.num);}
+	if (strcmp(op, "^") == 0) {return lval_num(powl(x.num,y.num));}
+	if (strcmp(op, "n") == 0) {return lval_num(fminl(x.num,y.num));}
+	if (strcmp(op, "x") == 0) {return lval_num(fmaxl(x.num,y.num));}
+	
+	//if it reaches until this point, return bad operator snice non of these operators work
+	return lval_err(LERR_BAD_OP);
+}
+
+lval eval(mpc_ast_t* t){	
 	// if tag is number then jsut return it as is (since operator will be first if there's anything to add)
 	if (strstr(t->tag, "number")){
-		return atoi(t->contents);
+		errno = 0;
+		long x = strtol(t->contents, NULL, 10);
+		return errno != ERANGE ? lval_num(x) : lval_err(LERR_BAD_NUM);
+		// if no number error, return a num type lval, if not, return error type (of bad num type) lval
 	}
 	
 	//operator is always 2nd
 	char* op = t-> children[1]->contents;
 	//then comes the first number
-	long x = eval(t->children[2]);
+	lval x = eval(t->children[2]);
 	// then expression
 	int i = 3;
 	while (strstr(t->children[i]->tag, "expr")){
 		x = eval_op(x, op, eval(t->children[i]));
 		i++;
-	}
-	
+	}	
 	return x;
 }
 
@@ -80,8 +142,9 @@ int main(int argc, char** argv){
 			
 			//On success Print the AST//
 			//mpc_ast_print(r.output);
-			long result = eval(r.output);
-			printf("%li\n", result);
+			lval result = eval(r.output);
+			lval_println(result);
+			//printf("%li\n", result);
 			mpc_ast_delete(r.output);
 		} else {
 			//if not, print error

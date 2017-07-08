@@ -1,56 +1,42 @@
-// › Write a recursive function to compute the number of leaves of a tree.
-int leaves_number(tree){	
-	if (tree -> childrenCount == 0){return 1;}
-	
-	
-	int total = 0;
-	while (int i = 0 ; tree -> childrenCount; i++){
-		total += leaves_number->children[i];
-	}
-	return total;	
-}
-	
-// › Write a recursive function to compute the number of branches of a tree.
-int branches_number(tree){
-	
-	if (tree -> childrenCount == 0){return 1;}
-	
-	int total = 0;
-	while(int i = 0; tree->childrenCount; i++){
-		total += branches_number(tree->children[i]); 
-	}	
-	return total;
-}
-// › Write a recursive function to compute the most number of children spanning from one branch of a tree.
-int most_children_branch(tree){
-	if (tree -> childrenCount == 0){return 0;}
-	
-	int max = 0;
-	while(int i = 0; tree->childrenCount; i++){
-		int currentChild= tree->children[i];
-		if (currentChild -> childrenCount > max){ // not sure if this part is needed....
-			max = currentChild -> childrenCount;
-		}
-		int maxC = most_children_branch(currentChild);
-		if (maxC > max){
-			max = maxC;
-		}
-	}
-	return max;
-}
-// › How would you use strstr to see if a node was tagged as an expr?
-if (strstr(node -> tags, "expr")) {return 1;}
-// › How would you use strcmp to see if a node had the contents '(' or ')'?
-if (strcmp(node->contents, "(") == 0 || strcmp(node->contents,")") == 0) {return 1;}
-// › Add the operator %, which returns the remainder of division. For example % 10 6 is 4.
-# done in evaluationPlus.exe
-// › Add the operator ^, which raises one number to another. For example ^ 4 2 is 16.
-# requires math.h header
-# done in evaluationPlus.exe
-// › Add the function min, which returns the smallest number. For example min 1 5 3 is 1.
-# done in evaluationPlusPlus.exe as 'n' operator
-# note: caused Parser Undefined error when using multi char operators like "min" and "max"
-// › Add the function max, which returns the biggest number. For example max 1 5 3 is 5.
-# done in evaluationPlusPlus.exe as 'x' operator
-// › Change the minus operator - so that when it receives one argument it negates it.
-# you mean make it negative...? or what
+› Run the previous chapter's code through gdb and crash it. See what happens.
+// havent done so
+› How do you give an enum a name?
+
+typedef enum {
+	Nozomi,
+	Rin,
+	Umi
+} LilyWhite;
+
+› What are union data types and how do they work?
+Unions are often used to convert between the binary representations of integers and floats
+
+union types allow for different data types to be stored in the same memory location.
+basically a multi-type type for different types that wouldnt be associated otherwise like int and string and char
+
+can be initialized as a local instance or made into a type
+
+#local instance
+union {
+	int i;
+	char str[20];
+} playerData;
+
+#global
+
+union PlayerData {
+	int i;
+	char str[20];
+};
+
+› What are the advantages over using a union instead of struct?
+a guess: union stores within the same memory location, while struct basically references to different memory locations with each of its variables/fields.
+
+main difference is in memory management.
+union can only save one type of data at a time. it's kind of like a static global variable (will be overwritten regardless of location it is modified)
+structs are usually instanced based and can be modified independently to store its own variables in its fields AT THE COST OF MORE MEMORY
+
+› Can you use a union in the definition of lval?
+no...? you need to go through the entire expression for evaluation. 
+› Extend parsing and evaluation to support the remainder operator %.
+› Extend parsing and evaluation to support decimal types using a double field.
