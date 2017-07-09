@@ -39,4 +39,5 @@ structs are usually instanced based and can be modified independently to store i
 › Can you use a union in the definition of lval?
 no...? you need to go through the entire expression for evaluation. 
 › Extend parsing and evaluation to support the remainder operator %.
+done in error-handling-with-mod
 › Extend parsing and evaluation to support decimal types using a double field.
