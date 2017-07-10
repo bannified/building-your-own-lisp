@@ -25,7 +25,6 @@ lval* lval_num(long x){
 	v -> num = x; // refers to the input x
 	//no v.err because this is not an error case.
 	return v;
-	return 0;
 }
 
 lval* lval_err(char* m){
@@ -35,7 +34,6 @@ lval* lval_err(char* m){
 	strcpy(v->err,m);
 	// error yet to be assigned since it's unknown what it is
 	return v;
-	return 0;
 }
 
 lval* lval_sym(char* s){
@@ -44,7 +42,6 @@ lval* lval_sym(char* s){
 	v->sym = malloc(strlen(s)+1);
 	strcpy(v->sym,s);
 	return v;
-	return 0;
 }
 
 lval* lval_sexpr(void){
@@ -53,7 +50,6 @@ lval* lval_sexpr(void){
 	v->count = 0;
 	v->cell = NULL;
 	return v;
-	return 0;
 }
 
 lval* lval_pop(lval* v, int i){
@@ -374,9 +370,9 @@ int main(int argc, char** argv){
 		"									\
 			number	:	/-?[0-9]+/;			\
 			symbol:	'+' | '-' | '*' | '/' | '^' | '%' | 'n' | 'x';	\
-			sexpr : '(' <expr> ')' ;						\
-			expr	:	<number> | '(' <operator> <expr>+ ')' ;\
-			lispy : /^/ <operator><expr>+ /$/; \
+			sexpr : '(' <expr>* ')' ;						\
+			expr	:	<number> | <symbol> | <sexpr> ;\
+			lispy : /^/ <expr>* /$/; \
 		",
 		Number, Symbol, Sexpr, Expr, Lispy);
 	
@@ -419,9 +415,10 @@ int main(int argc, char** argv){
 			mpc_err_delete(r.error);
 			
 		}
+		//free(input);
 	}
 	
-	mpc_cleanup(4,Number,Symbol, Sexpr, Expr, Lispy);
+	mpc_cleanup(5,Number,Symbol, Sexpr, Expr, Lispy);
 	
 	return 0;
 }
