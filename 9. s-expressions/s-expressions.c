@@ -122,7 +122,6 @@ lval* lval_add(lval* v, lval* x){
 	v->cell = realloc(v->cell, sizeof(lval*) * v->count); // recalculate to +1 more lval size memory
 	v->cell[v->count-1] = x; // assign the pointer to this pointer lists LAST index 
 	return v;
-	return 0;
 	
 }	
 
