@@ -691,7 +691,7 @@ lval* builtin_var(lenv* e, lval* a, char* func){
 	LASSERT(a, a->cell[0]->type == LVAL_QEXPR,
 	"Function 'def' was passed incorrect type! (Expected: Qexpr)"); // ensuring that this is all in {} brackets
 	
-	//first argument is symbol list // i.e. { lolol, kekeke } 100 referring to {lolol kekeke}
+	//first argument is symbol list // i.e. { lolol kekeke } 100 referring to {lolol kekeke}
 	lval* syms = a->cell[0];
 	
 	//ensure all elements of first list are symbols; ensuring that "lolol" are all symbols/allowed in the symbols regex
